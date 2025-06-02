@@ -1,0 +1,103 @@
+# Summer Analytics 2025 - Week 1 Assignment
+
+# Importing necessary libraries
+import pandas as pd
+import numpy as np
+
+# Load the dataset
+df = pd.read_csv("Cars.csv")
+
+# Set 'car name' column as the index
+df.set_index('car name', inplace=True)
+
+# Display the first 5 rows of the dataset
+print("\nFirst 5 rows of the dataset:")
+print(df.head())
+
+# Shape of the dataset (Rows, Columns)
+dataset_shape = df.shape
+print("\nDataset Shape:", dataset_shape)
+
+# Data types of each column
+dtypes = df.dtypes
+print("\nData Types:\n", dtypes)
+
+# Replace '?' in 'horsepower' with NaN and convert to float
+df['horsepower'].replace('?', np.nan, inplace=True)
+df['horsepower'] = df['horsepower'].astype(float)
+
+# Count of missing values in each column
+missing_values = df.isnull().sum()
+print("\nMissing Values:\n", missing_values)
+
+# Replace missing values in 'horsepower' with column mean
+df['horsepower'].fillna(df['horsepower'].mean(), inplace=True)
+
+# Mean and median of 'mpg'
+mean_mpg = df['mpg'].mean()
+median_mpg = df['mpg'].median()
+print("\nMean MPG:", mean_mpg)
+print("Median MPG:", median_mpg)
+
+# Standard deviation and variance of 'weight'
+std_weight = df['weight'].std()
+var_weight = df['weight'].var()
+print("\nStandard Deviation of Weight:", std_weight)
+print("Variance of Weight:", var_weight)
+
+# Number of cars with 8 cylinders
+num_8_cylinders = (df['cylinders'] == 8).sum()
+print("\nNumber of Cars with 8 Cylinders:", num_8_cylinders)
+
+# Average mpg of cars with 4 cylinders
+avg_mpg_4_cyl = df[df['cylinders'] == 4]['mpg'].mean()
+print("\nAverage MPG of Cars with 4 Cylinders:", avg_mpg_4_cyl)
+
+# Car with maximum horsepower
+max_hp = df['horsepower'].max()
+cars_with_max_hp = df[df['horsepower'] == max_hp].index.unique()
+print("\nMaximum Horsepower:", max_hp)
+print("Car(s) with Maximum Horsepower:", cars_with_max_hp)
+
+# Create a new column 'power_to_weight'
+df['power_to_weight'] = df['horsepower'] / df['weight']
+
+# Set 'power_to_weight' column as the new index
+df.set_index('power_to_weight', inplace=True)
+
+# Average power_to_weight ratio for cars from origin 1
+avg_pw_origin1 = df[df['origin'] == 1]['power_to_weight'].mean()
+print("\nAverage Power-to-Weight Ratio for Origin 1 Cars:", avg_pw_origin1)
+
+# Number of unique car names
+unique_car_names = df.index.nunique()
+print("\nNumber of Unique Car Names:", unique_car_names)
+
+# Unique mpg values
+unique_mpg_values = df['mpg'].unique()
+print("\nUnique MPG Values:", unique_mpg_values)
+
+# Car(s) with best power-to-weight ratio and above-median mpg
+above_median_mpg = df[df['mpg'] > median_mpg]
+max_pw = above_median_mpg.index.max()
+best_cars = above_median_mpg.loc[[max_pw]]
+print("\nCar(s) with Best Power-to-Weight Ratio and Above-Median MPG:\n", best_cars)
+
+# Number of cars with mpg >= 35
+num_cars_mpg_35_or_more = (df['mpg'] >= 35).sum()
+print("\nNumber of Cars with MPG ≥ 35:", num_cars_mpg_35_or_more)
+
+# Most common origin of cars with horsepower > 100 and weight < 3000
+filtered_cars = df[(df['horsepower'] > 100) & (df['weight'] < 3000)]
+origin_counts = filtered_cars['origin'].value_counts()
+print("\nOrigin Counts for Cars with HP > 100 and Weight < 3000:\n", origin_counts)
+
+# Mean acceleration of Japanese cars
+mean_acc_japan = round(df[df['origin'] == 3]['acceleration'].mean(), 2)
+print("\nMean Acceleration of Japanese Cars:", mean_acc_japan)
+
+# Year with highest average mpg
+yearly_avg_mpg = df.groupby('model year')['mpg'].mean()
+best_year = yearly_avg_mpg.idxmax()
+best_year_avg = yearly_avg_mpg.max()
+print(f"\nModel Year with Highest Average MPG: {best_year} ({best_year_avg:.2f})")
